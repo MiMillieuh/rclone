@@ -336,6 +336,10 @@ func newProtonDrive(ctx context.Context, f *Fs, opt *Options, m configmap.Mapper
 	config.ReplaceExistingDraft = opt.ReplaceExistingDraft
 	config.EnableCaching = opt.EnableCaching
 
+	// match the web client's default
+	config.ConcurrentBlockUploadCount = 5
+	config.ConcurrentFileCryptoCount = 3
+
 	// let's see if we have the cached access credential
 	uid, accessToken, refreshToken, saltedKeyPass, hasUseReusableLoginCredentials := getConfigMap(m)
 	_saltedKeyPass = saltedKeyPass

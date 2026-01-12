@@ -1,4 +1,4 @@
-module github.com/rclone/rclone
+module github.com/MiMillieuh/rclone
 
 go 1.24.4
 
@@ -43,8 +43,8 @@ require (
 	github.com/go-git/go-billy/v5 v5.6.2
 	github.com/google/uuid v1.6.0
 	github.com/hanwen/go-fuse/v2 v2.9.0
-	github.com/henrybear327/Proton-API-Bridge v1.0.0
-	github.com/henrybear327/go-proton-api v1.0.0
+	github.com/MiMillieuh/Proton-API-Bridge v1.0.2
+	github.com/MiMillieuh/go-proton-api v1.0.2
 	github.com/jcmturner/gokrb5/v8 v8.4.4
 	github.com/jlaffaye/ftp v0.2.1-0.20240918233326-1b970516f5d3
 	github.com/josephspurrier/goversioninfo v1.5.0
