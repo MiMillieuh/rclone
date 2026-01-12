@@ -12,6 +12,7 @@ import (
 	"mime"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/ProtonMail/gopenpgp/v2/crypto"
@@ -24,6 +25,15 @@ func (protonDrive *ProtonDrive) handleRevisionConflict(ctx context.Context, link
 
 		draftRevision, err := protonDrive.GetRevisions(ctx, link, proton.RevisionStateDraft)
 		if err != nil {
+			// If we get "File or folder not found" (2501) on a link we just found, it's a ghost link.
+			// We should delete it and signal for recreation.
+			if strings.Contains(err.Error(), "2501") {
+				err = protonDrive.c.DeleteChildren(ctx, protonDrive.MainShare.ShareID, link.ParentLinkID, linkID)
+				if err != nil {
+					return "", false, err
+				}
+				return "", true, nil
+			}
 			return "", false, err
 		}
 
@@ -38,6 +48,14 @@ func (protonDrive *ProtonDrive) handleRevisionConflict(ctx context.Context, link
 				}
 				err = protonDrive.c.DeleteRevision(ctx, protonDrive.MainShare.ShareID, linkID, draftRevision[0].ID)
 				if err != nil {
+					// Catch 2501 during DeleteRevision too
+					if strings.Contains(err.Error(), "2501") {
+						err = protonDrive.c.DeleteChildren(ctx, protonDrive.MainShare.ShareID, link.ParentLinkID, linkID)
+						if err != nil {
+							return "", false, err
+						}
+						return "", true, nil
+					}
 					return "", false, err
 				}
 			} else {
@@ -45,8 +63,17 @@ func (protonDrive *ProtonDrive) handleRevisionConflict(ctx context.Context, link
 			}
 		}
 
+		// create a new revision
 		newRevision, err := protonDrive.c.CreateRevision(ctx, protonDrive.MainShare.ShareID, linkID)
 		if err != nil {
+			// Catch 2501 during CreateRevision too
+			if strings.Contains(err.Error(), "2501") {
+				err = protonDrive.c.DeleteChildren(ctx, protonDrive.MainShare.ShareID, link.ParentLinkID, linkID)
+				if err != nil {
+					return "", false, err
+				}
+				return "", true, nil
+			}
 			return "", false, err
 		}
 

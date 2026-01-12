@@ -2,8 +2,8 @@ module github.com/rclone/rclone
 
 go 1.24.4
 
-replace github.com/henrybear327/Proton-API-Bridge => ./CustLibs/proton-api-bridge
-replace github.com/henrybear327/go-proton-api => ./CustLibs/go-proton-api
+replace github.com/henrybear327/Proton-API-Bridge => ../libs/proton-api-bridge
+replace github.com/henrybear327/go-proton-api => ../libs/go-proton-api
 
 godebug x509negativeserial=1
 
